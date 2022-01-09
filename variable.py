@@ -4,6 +4,7 @@ from ETLY import *
 fun = random.randint(0, 100)  # fun值随机化
 name = ''
 password = ''
+auto_save_time = 300
 
 # ----------------------数值初始化
 

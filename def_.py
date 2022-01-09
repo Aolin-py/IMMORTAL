@@ -4,9 +4,9 @@ import time
 import random
 import threading
 import re
+import imp
 
 from prettytable import *
-from playsound import playsound
 
 from variable import *
 from FDLB import *
@@ -34,73 +34,36 @@ class Archive:
 
     def save_Archive(self):
         cwd = os.getcwd()
-        f = open(cwd + '\\UserConfig.config', 'w')
-        f.write(str(self.name) + '\n')
-        f.write(str(self.password) + '\n')
-        f.write(str(self.HP) + '\n')
-        f.write(str(self.HP_MAX) + '\n')
-        f.write(str(self.DF) + '\n')
-        f.write(str(self.AT) + '\n')
-        f.write(str(self.HV) + '\n')
-        f.write(str(self.HV_MAX) + '\n')
-        f.write(str(self.EXP) + '\n')
-        f.write(str(self.EXP_MAX) + '\n')
-        f.write(str(self.BAG_List) + '\n')
-        f.write(str(self.LV) + '\n')
-        f.write(str(self.coin) + '\n')
-        f.write(self.realm + '\n')
-        f.write(str(Buffer_LV) + '\n')
+        f = open(cwd + '\\UserConfig.py', 'w', encoding='utf-8')
+        f.write('name =' + "'" + str(self.name) + "'" +'\n')
+        f.write('password = ' + "'" + str(self.password) + "'" +  '\n')
+        f.write('HP = ' + str(self.HP) + '\n')
+        f.write('HP_MAX = ' + str(self.HP_MAX) + '\n')
+        f.write('DF = ' + str(self.DF) + '\n')
+        f.write('AT = ' + str(self.AT) + '\n')
+        f.write('HV = ' + str(self.HV) + '\n')
+        f.write('HV_MAX = ' + str(self.HV_MAX) + '\n')
+        f.write('EXP = ' + str(self.EXP) + '\n')
+        f.write('EXP_MAX = ' + str(self.EXP_MAX) + '\n')
+        f.write('BAG_List = ' + str(self.BAG_List) + '\n')
+        f.write('LV = ' + str(self.LV) + '\n')
+        f.write('coin = ' + str(self.coin) + '\n')
+        f.write('realm = ' + "'" +  self.realm + "'" + '\n')
+        f.write('Buffer_LV = ' + str(Buffer_LV) + '\n')
         f.close()
 
-    def read_Archive(self):
-        global HP
-        global HV
-        global DF
-        global EXP
-        global EXP_MAX
-        global BAG
-        global BAG_Used  # 变量全局化
-        global LV
-        global AT
-        global HP_MAX
-        global HV_MAX
-        global coin
-        global realm
-        global BAG_List
-        global name
-        global password
-        global Buffer_LV
-        f = open('UserConfig.config', 'r')
-        name = str(f.readline().strip())
-        password = str(f.readline().strip())
-        HP = float(f.readline().strip())
-        HP_MAX = int(f.readline().strip())
-        DF = int(f.readline().strip())
-        AT = int(f.readline().strip())
-        HV = int(f.readline().strip())
-        HV_MAX = int(f.readline().strip())
-        EXP = float(f.readline().strip())
-        EXP_MAX = float(f.readline().strip())
-        BAG_List = eval(f.readline().strip())
-        LV = int(f.readline().strip())
-        coin = int(f.readline().strip())
-        realm = str(f.readline().strip())
-        Buffer_LV = int(f.readline().strip())
-
     def judgment(self):
-        global name
-        global password
-        if os.path.exists('UserConfig.config'):
+        if os.path.exists('UserConfig.py'):
             time.sleep(0.2)
-            print('欢迎回来,\033[1;36m' + str(name) + '\033[0m')
+            print('欢迎回来,\033[1;36m' + str(self.name) + '\033[0m')
             time.sleep(0.3)
             input_password = input('请输入密码<')
-            if input_password == password:
+            if input_password == self.password:
                 print('登陆成功')
             else:
                 print('密码错误,你还有一次机会')
                 input_password = input('请输入密码<')
-                if input_password == password:
+                if input_password == self.password:
                     print('登陆成功')
                 else:
                     print('密码错误')
@@ -115,6 +78,11 @@ class Archive:
             print('登陆成功')
             save = Archive(name, password)
             save.save_Archive()
+    def auto_save(self):
+        while True:
+            auto_s = Archive(name, password)
+            auto_s.save_Archive()
+            time.sleep(auto_save_time)
 
 
 def update_announcement():
@@ -127,7 +95,8 @@ def update_announcement():
 def music():
     global place
     if place == '熟食铺':
-        playsound('')
+        # playsound('')
+        pass
 
 
 def poem_w(text, width):
@@ -146,19 +115,19 @@ def poem_w(text, width):
 
 
 def operation():  # 帮助文档
-    print('/pc或/personal centre来打开个人中心')
+    print('pc或personal centre来打开个人中心')
     time.sleep(1)
-    print('/f或/fight进入战斗界面')
+    print('f或fight进入战斗界面')
     time.sleep(1)
-    print('/shop打开商店')
+    print('shop打开商店')
     time.sleep(1)
-    print('/map打开地图,/go 东南西北英文首字母(n s e w)进行移动')
+    print('map打开地图,go 东南西北英文首字母(n s e w)进行移动')
     time.sleep(1)
     print('在战斗中,/r可以逃跑（50%）')
     time.sleep(1)
     print('介绍完毕，尽情游玩吧')
-    print('输入/help再次观看')
-    print('输入/help <物品名>可以查看数据')
+    print('输入help再次观看')
+    print('输入help <物品名>可以查看数据')
 
 
 def weather(velocity_of_flow):
@@ -194,6 +163,7 @@ def weather(velocity_of_flow):
             rain_s = random.randint(0, 5000)
             if 300 < rain_s <= 400:
                 print('渐渐地，雨停了 \n \033[0m>')
+                rain = False
             else:
                 pass
         elif weather_r == 7428 or weather_r == 562:
@@ -203,6 +173,7 @@ def weather(velocity_of_flow):
             windy_s = random.randint(0, 5000)
             if 300 < windy_s <= 400:
                 print('风逐渐变小了，一切归于宁静\n \033[0m>')
+                windy = False
             else:
                 pass
 
@@ -766,33 +737,35 @@ def cedn():  # 总检测
     global menpai
 
     in1 = input('\033[0m>')
-    if in1 == '/help':
+    if in1 == 'help':
         operation()
-    if in1 == '/pc' or in1 == '/personal centre':
+    if in1 == 'pc' or in1 == 'personal centre':
         pc()
-    if in1 == '/f' or in1 == '/fight':
+    if in1 == 'f' or in1 == 'fight':
         fight = Fight(str(place))
         fight.fight()
-    if in1 == '/bag':
+    if in1 == 'bag':
         bag()
-    if '/use' in in1:
+    if 'use' in in1:
         use_things(in1[5:])
-    if '/debug' in in1:
+    if 'debug' in in1:
         if in1[7:8] == 'AT':
             AT_add(int(in1[10:]))
         if in1[7:8] == 'DF':
             DF_add(int(in1[10:]))
         if in1[7:9] == 'EXP':
             exp(int(in1[11:]))
-    if '/help ' in in1:
-        if str(in1[6:]) in FDLB:
-            print(str(in1[6:]) + '的数据：')
+    if 'help ' in in1:
+        if str(in1[5:]) in FDLB:
+            print(str(in1[5:]) + '的数据：')
             print('回复' + str(FDLB[str(in1[6:])][0]) + '点饱食')
             print('回复' + str(FDLB[str(in1[6:])][1]) + '点气血')
-        elif str(in1[6:]) in ETLY:
-            print(str(in1[6:]) + '的数据：')
+        elif str(in1[5:]) in ETLY:
+            print(str(in1[5:]) + '的数据：')
             print('提升' + str(ETLY[str(in1[6:])][0]) + '点防御/攻击')
-    if in1 == '/version':
+        else:
+            print('目前道途中没有您所说的物品~')
+    if in1 == 'version':
         f = open('ChangeLog.md', 'r', encoding='utf-8')
         while True:
             line = f.readline()
@@ -801,7 +774,7 @@ def cedn():  # 总检测
                 break
 
             print(line, end='')
-    if in1 == '/map':
+    if in1 == 'map':
         f = open('map.txt', 'r', encoding='utf-8')
         while True:
             line = f.readline()
@@ -812,13 +785,13 @@ def cedn():  # 总检测
             print(line, end='')
         print('\n你现在位于\033[1;31m', place, '\n')
 
-    if in1 == '/shop':
+    if in1 == 'shop':
         shop()
-    if in1 == '/buy l':
+    if in1 == 'buy l':
         shop_sl()
-    if in1 == '/rec l':
+    if in1 == 'rec l':
         shop_rl()
-    if '/rec' in in1 and 'l' not in in1:
+    if 'rec' in in1 and 'l' not in in1:
         number = re.compile(r'\d')
         rec_if = number.search(str(in1))
         if rec_if:
@@ -826,36 +799,35 @@ def cedn():  # 总检测
                 shop_r(re.sub(r'[^\u4e00-\u9fa5]', '', in1))
         else:
             shop_r(re.sub(r'[^\u4e00-\u9fa5]', '', in1))
-    if '/buy' in in1 and 'l' not in in1:
-        shop_s(in1[5:])
-    if in1 == '/save':
+    if 'buy' in in1 and 'l' not in in1:
+        shop_s(in1[4:])
+    if in1 == 'save':
         save = Archive(name, password)
         save.save_Archive()
         print('存档完毕，可退出')
-    if in1 == '/rf':
-        rf = Archive(name, password)
-        rf.read_Archive()
+    if in1 == 'rf':
+        imp.load_compiled('Userconfig.py')
         print('读档成功')
-    if '/go ' in in1:
+    if 'go ' in in1:
         # print(place)
-        if len(in1) > 6:  # 判断输入字符串长度
-            for i in range(0, int(in1[6:])):  # 重复执行
-                move(in1[4:5])
+        if len(in1) > 5:  # 判断输入字符串长度
+            for i in range(0, int(in1[5:])):  # 重复执行
+                move(in1[3:4])
         else:  # 若未输入数字
-            move(in1[4:])  # 只执行一次
+            move(in1[3:])  # 只执行一次
         # print(place)
     if place == '熟食铺':
         if not fi_enter:
             print('\033[0m这里肉香漫天，你忍不住咽了咽口水')
-            print('输入/fi <物品名>烤肉(收费三铜币）')
+            print('输入fi <物品名>烤肉(收费三铜币）')
             fi_enter = True
         else:
             pass
-        if '/fi' in in1 and place == '熟食铺':
-            bbq(in1[4:])
-        elif '/fi' in in1 and place != '熟食铺':
-            print('你觉得你能烤好吗？')
-    if '/go n' in in1 and place == '树林':
+        if 'fi' in in1 and place == '熟食铺':
+            bbq(in1[3:])
+        elif 'fi' in in1 and place != '熟食铺':
+            print('你想了想糊成碳的烤肉，还是决定去熟食铺烹饪')
+    if 'go n' in in1 and place == '树林':
         if menpai_can:
             place = '门派接待使者'
         else:
@@ -923,4 +895,6 @@ def cedn():  # 总检测
         place = '中央广场'
         HP = int(HP_MAX / 100)
         print(HP)
-        clear(BAG_List)
+        BAG_List.clear()
+    if in1 == 'exit':
+        exit()

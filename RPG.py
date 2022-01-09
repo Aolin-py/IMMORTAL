@@ -4,7 +4,10 @@ import def_
 import os
 import threading
 import datetime
-
+if os.path.exists('UserConfig.py'):
+    from UserConfig import *
+else:
+    pass
 
 #
 #                     _ooOoo_
@@ -50,17 +53,12 @@ time.sleep(0.7)
 print('输入/help查看操作指南')
 print('\033[2;31m先/save再下线！\033[0m')
 account = def_.Archive(name, password)
-if os.path.exists('UserConfig.config'):
-    account.read_Archive()
-else:
-    pass
-account = def_.Archive(name, password)
 account.judgment()
 def_.update_announcement()
 weather_t = threading.Thread(target=def_.weather, args=(1,))
 # music_p = threading.Thread(target=music,args=('',))
 game_start = threading.Thread(target=start, args=('',))
-auto_save = threading.Thread(target=account.save_Archive, args=('', ))
+auto_save = threading.Thread(target=account.auto_save, args=('', ))
 
 weather_t.start()
 # music_p.start()
