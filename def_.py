@@ -8,10 +8,10 @@ import imp
 
 from prettytable import *
 
-from variable import *
-from FDLB import *
-from MTLB import *
-from SPLB import *
+from Variables.variable import *
+from Variables.FDLB import *
+from Variables.MTLB import *
+from Variables.SPLB import *
 
 
 class Archive:
