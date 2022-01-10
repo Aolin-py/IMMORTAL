@@ -1,5 +1,5 @@
 import time
-from variable import *
+from Variables.variable import *
 import def_
 import os
 import threading

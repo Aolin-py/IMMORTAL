@@ -1,4 +1,4 @@
-from variable import *
+from Variables.variable import *
 
 shop_sell_list = {'青铜剑': ['隔壁打铁铺使用上好青铜制作', 30, 0], '青铜头盔': ['虽然青铜质脆，但该有的防具还是要有的', 10, 1],
                   '青铜甲': ['虽然青铜质脆，但该有的防具还是要有的', 30, 2],
