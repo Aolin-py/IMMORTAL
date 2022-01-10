@@ -63,5 +63,6 @@ auto_save = threading.Thread(target=account.auto_save, args=('', ))
 weather_t.start()
 # music_p.start()
 game_start.start()
+auto_save.start()
 
 print('现在是' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '\n')

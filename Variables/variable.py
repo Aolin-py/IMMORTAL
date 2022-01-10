@@ -1,5 +1,4 @@
 import random
-from ETLY import *
 
 fun = random.randint(0, 100)  # fun值随机化
 name = ''
@@ -36,8 +35,8 @@ hand = '拳头'
 
 # ----------------------
 
-AT = int(ETLY[hand][0])  # 攻击
-DF = int(ETLY[head][0]) + int(ETLY[body][0]) + int(ETLY[foot][0]) + int(ETLY[leg][0])  # 防御值计算（利用字典
+AT = 0  # 攻击
+DF = 0  # 防御值计算（利用字典
 
 # ----------------------
 ET = ['头部：' + str(head), '躯体：' + str(body), '腿部：' + str(leg), '脚部：' + str(foot), '手部：' + str(hand)]  # 装备总览
