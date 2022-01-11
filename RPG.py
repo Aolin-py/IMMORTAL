@@ -1,13 +1,14 @@
 import time
-from Variables.variable import *
 import def_
 import os
 import threading
 import datetime
+import random
 if os.path.exists('UserConfig.py'):
     from UserConfig import *
 else:
-    pass
+    name = ''
+    password = ''
 
 #
 #                     _ooOoo_
@@ -32,6 +33,12 @@ else:
 #  .............................................
 #           佛祖保佑             永无BUG
 #
+fun = random.randint(0, 100)  # fun值随机化
+
+poem_l = ['平明拂剑朝天去，薄暮垂鞭醉酒归。', '五陵年少金市东，银鞍白马度春风。', '感君恩重许君命，泰山一掷轻鸿毛。', '手中电曳倚天剑，直斩长鲸海水开。', '万里浮云卷碧山，青天中道流孤月。',
+          '暂就东山赊月色，酣歌一夜送泉明。', '我醉欲眠卿且去，明朝有意抱琴来。', '一身转战三千里，一剑曾当百万师。', '弓背霞明剑照霜，秋风走马出咸阳。', '三尺青锋怀天下，一骑白马开吴疆。']
+poem = random.choice(poem_l)
+
 def start(name):
     print(name)
     while True:
@@ -54,11 +61,12 @@ print('输入/help查看操作指南')
 print('\033[2;31m先/save再下线！\033[0m')
 account = def_.Archive(name, password)
 account.judgment()
+account = def_.Archive(def_.name, def_.password)
 def_.update_announcement()
 weather_t = threading.Thread(target=def_.weather, args=(1,))
 # music_p = threading.Thread(target=music,args=('',))
 game_start = threading.Thread(target=start, args=('',))
-auto_save = threading.Thread(target=account.auto_save, args=('', ))
+auto_save = threading.Thread(target=account.auto_save, args=('',))
 
 weather_t.start()
 # music_p.start()
