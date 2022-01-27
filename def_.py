@@ -171,19 +171,19 @@ class Archive:
             save.save_Archive()
     def auto_save(self, a):
         global name, password, auto_save_time
+        auto_s = Archive(name, password)
         print(a)
         while True:
             time.sleep(auto_save_time)
-            auto_s = Archive(name, password)
             auto_s.save_Archive()
 
 
 
 def update_announcement():
     print('\033[1;35m--------------更新公告--------------\033[0m')
-    print('版本:5.1.3')
-    print('-- 修复了诸多bug')
-    print('-- 没了')
+    print('版本:5.1.6')
+    print('-- 添加自动保存功能')
+    print('-- 剧情火热架构中ing......')
 
 
 def music():
@@ -217,8 +217,8 @@ def operation():  # 帮助文档
     time.sleep(1)
     print('map打开地图,go 东南西北英文首字母(n s e w)进行移动')
     time.sleep(1)
-    print('在战斗中,/r可以逃跑（50%）')
-    time.sleep(1)
+    # print('在战斗中,r可以逃跑（50%）')
+    # time.sleep(1)
     print('介绍完毕，尽情游玩吧')
     print('输入help再次观看')
     print('输入help <物品名>可以查看数据')
@@ -270,6 +270,19 @@ def weather(velocity_of_flow):
                 windy = False
             else:
                 pass
+
+def Tutorial():
+    print('\033[1;33m1897——光绪二十三年')
+    time.sleep(1)
+    home_list = PrettyTable()
+    home_list.field_names = ['序号','名称']
+    home_list.add_row(['1', '达官贵族'])
+    home_list.add_row(['2', '书香门第'])
+    home_list.add_row(['3', '武术世家'])
+    home_list.add_row(['4', '流浪街头'])
+    home_list.add_row(['5', '佃农家庭'])
+    print(home_list)
+    home = input('\033[0m 你出生在一个：（填序号）')
 
 
 def pc():  # 个人界面
@@ -335,7 +348,7 @@ def pc():  # 个人界面
         realm_LV = 1
     print('【境界】' + str(realm) + str(realm_LV) + '段')
     print('\033[1;36m【铜钱】' + str(coin))
-    print('\033[0m/bag 可以打开背包')
+    print('\033[0mbag 可以打开背包')
 
 
 class Fight:
@@ -562,7 +575,7 @@ class Fight:
                 # f1_run.start()
             else:
                 print('这儿似乎没有什么可以让你打的')
-                print('\033[1;33m 提示：使用/go n/s/w/e 在地图中行走，/map打开地图\033[0m')
+                print('\033[1;33m 提示：使用go n/s/w/e 在地图中行走，map打开地图\033[0m')
 
 
 def bag():
@@ -588,7 +601,7 @@ def bag():
         print('\033[1;33m')
         print(bag_p)
         print('\033[0m')
-        print('/use <物品名> 可以使用物品')
+        print('use <物品名> 可以使用物品')
     else:
         print('你嘛都没有')
 
@@ -833,166 +846,175 @@ def cedn():  # 总检测
     global place
     global fi_enter
     global menpai
-
-    in1 = input('\033[0m>')
-    if in1 == 'help':
-        operation()
-    if in1 == 'pc' or in1 == 'personal centre':
-        pc()
-    if in1 == 'f' or in1 == 'fight':
-        fight = Fight(str(place))
-        fight.fight()
-    if in1 == 'bag':
-        bag()
-    if 'use' in in1:
-        use_things(in1[4:])
-    if 'debug' in in1:
-        if in1[7:8] == 'AT':
-            AT_add(int(in1[10:]))
-        if in1[7:8] == 'DF':
-            DF_add(int(in1[10:]))
-        if in1[7:9] == 'EXP':
-            exp(int(in1[11:]))
-    if 'help ' in in1:
-        if str(in1[5:]) in FDLB:
-            print(str(in1[5:]) + '的数据：')
-            print('回复' + str(FDLB[str(in1[6:])][0]) + '点饱食')
-            print('回复' + str(FDLB[str(in1[6:])][1]) + '点气血')
-        elif str(in1[5:]) in ETLY:
-            print(str(in1[5:]) + '的数据：')
-            print('提升' + str(ETLY[str(in1[6:])][0]) + '点防御/攻击')
-        else:
-            print('目前道途中没有您所说的物品~')
-    if in1 == 'version':
-        f = open('ChangeLog.md', 'r', encoding='utf-8')
-        while True:
-            line = f.readline()
-
-            if len(line) == 0:
-                break
-
-            print(line, end='')
-    if in1 == 'map':
-        f = open('map.txt', 'r', encoding='utf-8')
-        while True:
-            line = f.readline()
-
-            if len(line) == 0:
-                break
-
-            print(line, end='')
-        print('\n你现在位于\033[1;31m', place, '\n')
-
-    if in1 == 'shop':
-        shop()
-    if in1 == 'buy l':
-        shop_sl()
-    if in1 == 'rec l':
-        shop_rl()
-    if 'rec' in in1 and 'l' not in in1:
-        number = re.compile(r'\d')
-        rec_if = number.search(str(in1))
-        if rec_if:
-            for i in range(0, int(rec_if.group())):
-                shop_r(re.sub(r'[^\u4e00-\u9fa5]', '', in1))
-        else:
-            shop_r(re.sub(r'[^\u4e00-\u9fa5]', '', in1))
-    if 'buy' in in1 and 'l' not in in1:
-        shop_s(in1[4:])
-    if in1 == 'save':
-        save = Archive(name, password)
-        save.save_Archive()
-        print('存档完毕，可退出')
-    if in1 == 'rf':
-        imp.load_compiled('Userconfig.py')
-        print('读档成功')
-    if 'go ' in in1:
-        # print(place)
-        if len(in1) > 5:  # 判断输入字符串长度
-            for i in range(0, int(in1[5:])):  # 重复执行
-                move(in1[3:4])
-        else:  # 若未输入数字
-            move(in1[3:])  # 只执行一次
-        # print(place)
-    if place == '熟食铺':
-        if not fi_enter:
-            print('\033[0m这里肉香漫天，你忍不住咽了咽口水')
-            print('输入fi <物品名>烤肉(收费三铜币）')
-            fi_enter = True
-        else:
-            pass
-        if 'fi' in in1 and place == '熟食铺':
-            bbq(in1[3:])
-        elif 'fi' in in1 and place != '熟食铺':
-            print('你想了想糊成碳的烤肉，还是决定去熟食铺烹饪')
-    if 'go n' in in1 and place == '树林':
-        if menpai_can:
-            place = '门派接待使者'
-        else:
-            print('你的功力太低了，人家看不上你')
-    if place == '门派接待使者':
-        menpai_admit_enter = True
-        if menpai_admit_enter:
-            if len(menpai) == 0:
-                print('\033[0m一位慈祥的老人走过来')
-                print('‘小兄弟，你可否想过闯荡江湖?’')
-                time.sleep(2)
-                print('我现在给你一个机会，你可以加入任意一个门派')
-                time.sleep(2)
-                print('注:输入k打开正派列表,n打开中庸列表,e打开邪门列表')
-                time.sleep(1)
-                menpai_goodAndEvil = input('你想救国济民，还是闯荡江湖，亦或者天下唯我独尊？')
-                time.sleep(2)
-                if menpai_goodAndEvil == 'k':
-                    print('\033[1;32m 你的心中升起一股浩然正气，你决定投身于名门正派\033[0m')
-                    time.sleep(1)
-                    menpai_list_out('k')
-                    print('注：输入序号决定门派')
-                    menpai_choose = input('你想加入哪个门派？')
-                    menpai = menpai_list_kind[str(menpai_choose)]
-                    print('你加入了\033[1;32m', menpai, '\033[0m')
-                elif menpai_goodAndEvil == 'n':
-                    print('\033[1;33m 你想了想，还是中庸之道最适合自己')
-                    time.sleep(1)
-                    menpai_list_out('n')
-                    print('注：输入序号决定门派')
-                    menpai_choose = input('你想加入哪个门派？')
-                    menpai = menpai_list_neutral[str(menpai_choose)]
-                    print('你加入了\033[1;33m', menpai, '\033[0m')
-                elif menpai_goodAndEvil == 'e':
-                    print('\033[1;31m你嘿嘿一笑，令人毛骨悚然。你决定加入江湖邪派')
-                    time.sleep(1)
-                    menpai_list_out('e')
-                    print('注：输入序号决定门派')
-                    menpai_choose = input('你想加入哪个门派？')
-                    menpai = menpai_list_evil[str(menpai_choose)]
-                    print('你加入了\033[1;31m', menpai, '\033[0m')
-                menpai_admit_enter = False
+    global auto_save_time
+    try:
+        in1 = input('\033[0m>')
+        if in1 == 'help':
+            operation()
+        if in1 == 'pc' or in1 == 'personal centre':
+            pc()
+        if in1 == 'f' or in1 == 'fight':
+            fight = Fight(str(place))
+            fight.fight()
+        if in1 == 'bag':
+            bag()
+        if 'use' in in1:
+            use_things(in1[4:])
+        if 'debug' in in1:
+            if in1[7:8] == 'AT':
+                AT_add(int(in1[10:]))
+            if in1[7:8] == 'DF':
+                DF_add(int(in1[10:]))
+            if in1[7:9] == 'EXP':
+                exp(int(in1[11:]))
+        if 'help ' in in1:
+            if str(in1[5:]) in FDLB:
+                print(str(in1[4:]) + '的数据：')
+                print('回复' + str(FDLB[str(in1[5:])][0]) + '点饱食')
+                print('回复' + str(FDLB[str(in1[5:])][1]) + '点气血')
+            elif str(in1[5:]) in ETLY:
+                print(str(in1[4:]) + '的数据：')
+                print('提升' + str(ETLY[str(in1[5:])][0]) + '点防御/攻击')
             else:
-                print('背叛师门不是件好事')
-        else:
-            pass
-    if HP <= 0:
-        HP = 0
-        time.sleep(1)
-        print('你吐出一大口鲜血，倒在地上抽搐几下就死了。')
-        time.sleep(2)
-        print('你来到了鬼门关')
-        place = '鬼门关'
-        print('白无常伸出长长长的舌头舔了舔手指')
-        time.sleep(1)
-        print('‘新来的，你叫什么名字？’')
-        time.sleep(2)
-        print('白无常死死盯着你，仿佛要把你的一切都看穿')
-        time.sleep(3)
-        print('白无常眉头紧蹙：阳寿未尽？怎么可能！')
-        time.sleep(2)
-        print('白无常叹了口气：罢了罢了，你走吧')
-        time.sleep(3)
-        print('你摇摇晃晃的站了起来，仿佛做了一场梦')
-        place = '中央广场'
-        HP = int(HP_MAX / 100)
-        print(HP)
-        BAG_List.clear()
-    if in1 == 'exit':
-        exit()
+                print('目前道途中没有您所说的物品~')
+        if in1 == 'version':
+            f = open('ChangeLog.md', 'r', encoding='utf-8')
+            while True:
+                line = f.readline()
+
+                if len(line) == 0:
+                    break
+
+                print(line, end='')
+        if in1 == 'map':
+            f = open('map.txt', 'r', encoding='utf-8')
+            while True:
+                line = f.readline()
+
+                if len(line) == 0:
+                    break
+
+                print(line, end='')
+            print('\n你现在位于\033[1;31m', place, '\n')
+
+        if in1 == 'shop':
+            shop()
+        if in1 == 'buy l':
+            shop_sl()
+        if in1 == 'rec l':
+            shop_rl()
+        if 'rec' in in1 and 'l' not in in1:
+            number = re.compile(r'\d')
+            rec_if = number.search(str(in1))
+            if rec_if:
+                for i in range(0, int(rec_if.group())):
+                    shop_r(re.sub(r'[^\u4e00-\u9fa5]', '', in1))
+            else:
+                shop_r(re.sub(r'[^\u4e00-\u9fa5]', '', in1))
+        if 'buy' in in1 and 'l' not in in1:
+            shop_s(in1[4:])
+        if in1 == 'save':
+            save = Archive(name, password)
+            save.save_Archive()
+            print('存档完毕，可退出')
+        if in1 == 'rf':
+            imp.load_compiled('Userconfig.py')
+            print('读档成功')
+        if 'go ' in in1:
+            # print(place)
+            if len(in1) > 5:  # 判断输入字符串长度
+                for i in range(0, int(in1[5:])):  # 重复执行
+                    move(in1[3:4])
+            else:  # 若未输入数字
+                move(in1[3:])  # 只执行一次
+            # print(place)
+        if place == '熟食铺':
+            if not fi_enter:
+                print('\033[0m这里肉香漫天，你忍不住咽了咽口水')
+                print('输入fi <物品名>烤肉(收费三铜币）')
+                fi_enter = True
+            else:
+                pass
+            if 'fi' in in1 and place == '熟食铺':
+                bbq(in1[3:])
+            elif 'fi' in in1 and place != '熟食铺':
+                print('你想了想糊成碳的烤肉，还是决定去熟食铺烹饪')
+        if 'go n' in in1 and place == '树林':
+            if menpai_can:
+                place = '门派接待使者'
+            else:
+                print('你的功力太低了，人家看不上你')
+        if place == '门派接待使者':
+            menpai_admit_enter = True
+            if menpai_admit_enter:
+                if len(menpai) == 0:
+                    print('\033[0m一位慈祥的老人走过来')
+                    print('‘小兄弟，你可否想过闯荡江湖?’')
+                    time.sleep(2)
+                    print('我现在给你一个机会，你可以加入任意一个门派')
+                    time.sleep(2)
+                    print('注:输入k打开正派列表,n打开中庸列表,e打开邪门列表')
+                    time.sleep(1)
+                    menpai_goodAndEvil = input('你想救国济民，还是闯荡江湖，亦或者天下唯我独尊？')
+                    time.sleep(2)
+                    if menpai_goodAndEvil == 'k':
+                        print('\033[1;32m 你的心中升起一股浩然正气，你决定投身于名门正派\033[0m')
+                        time.sleep(1)
+                        menpai_list_out('k')
+                        print('注：输入序号决定门派')
+                        menpai_choose = input('你想加入哪个门派？')
+                        menpai = menpai_list_kind[str(menpai_choose)]
+                        print('你加入了\033[1;32m', menpai, '\033[0m')
+                    elif menpai_goodAndEvil == 'n':
+                        print('\033[1;33m 你想了想，还是中庸之道最适合自己')
+                        time.sleep(1)
+                        menpai_list_out('n')
+                        print('注：输入序号决定门派')
+                        menpai_choose = input('你想加入哪个门派？')
+                        menpai = menpai_list_neutral[str(menpai_choose)]
+                        print('你加入了\033[1;33m', menpai, '\033[0m')
+                    elif menpai_goodAndEvil == 'e':
+                        print('\033[1;31m你嘿嘿一笑，令人毛骨悚然。你决定加入江湖邪派')
+                        time.sleep(1)
+                        menpai_list_out('e')
+                        print('注：输入序号决定门派')
+                        menpai_choose = input('你想加入哪个门派？')
+                        menpai = menpai_list_evil[str(menpai_choose)]
+                        print('你加入了\033[1;31m', menpai, '\033[0m')
+                    menpai_admit_enter = False
+                else:
+                    print('背叛师门不是件好事')
+            else:
+                pass
+        if HP <= 0:
+            HP = 0
+            time.sleep(1)
+            print('你吐出一大口鲜血，倒在地上抽搐几下就死了。')
+            time.sleep(2)
+            print('你来到了鬼门关')
+            place = '鬼门关'
+            print('白无常伸出长长长的舌头舔了舔手指')
+            time.sleep(1)
+            print('‘新来的，你叫什么名字？’')
+            time.sleep(2)
+            print('白无常死死盯着你，仿佛要把你的一切都看穿')
+            time.sleep(3)
+            print('白无常眉头紧蹙：阳寿未尽？怎么可能！')
+            time.sleep(2)
+            print('白无常叹了口气：罢了罢了，你走吧')
+            time.sleep(3)
+            print('你摇摇晃晃的站了起来，仿佛做了一场梦')
+            place = '中央广场'
+            HP = int(HP_MAX / 100)
+            print(HP)
+            BAG_List.clear()
+        if in1 == 'exit':
+            exit()
+        if 'autosave ' in in1:
+            auto_save_time = int(in1[8:])
+            save = Archive(name, password)
+            save.save_Archive()
+    except Exception as e:
+        print('\033[1;31m发生错误！')
+        print('错误信息：%s' % e)
+        print('输入指令: %s' % in1)
