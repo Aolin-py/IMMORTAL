@@ -7,12 +7,94 @@ import re
 import imp
 
 from prettytable import *
+from Variables.FDLB import *
+from Variables.MTLB import *
+from Variables.SPLB import *
+from Variables.ETLY import *
+if os.path.exists('UserConfig.py'):
+    from UserConfig import *
+else:
+    name = ''
+    password = ''
+    auto_save_time = 300
 
-from variable import *
-from FDLB import *
-from MTLB import *
-from SPLB import *
+    # ----------------------数值初始化
 
+    HP = 100  # 生命
+    HP_MAX = 100
+    HV = 50  # 饥饿
+    HV_MAX = 50
+    EXP = 0  # 当前经验
+    EXP_MAX = 5  # 所需经验
+    BAG_Used = 0  # 目前已用
+    LV = 1  # 等级
+    Buffer_LV = LV
+    coin = 0  # 钱
+    realm = '凡人'
+    realm_LV = 1
+    # ----------------------
+
+    BAG_List = {'五品金疮药': 5}
+    BAG_List_Buffer = {}
+
+    # ----------------------
+
+    head = '绷带'
+    body = '破布衣'
+    leg = '补丁裤'
+    foot = '草鞋'
+    hand = '拳头'
+
+    # ----------------------
+    ET = ['头部：' + str(head), '躯体：' + str(body), '腿部：' + str(leg), '脚部：' + str(foot), '手部：' + str(hand)]  # 装备总览
+    DF = int(ETLY[head][0]) + int(ETLY[body][0]) + int(ETLY[foot][0]) + int(ETLY[leg][0])
+    AT = int(ETLY[hand][0])
+
+# ----------------------
+
+PATSE = {'knife': ['狠狠地挥向', '不偏不倚地挥在了', '击中了', '在空中划过一道优美的弧线，落在了', '挥向', '砍在了', '横劈在'],
+         'fist': ['抡向了', '击中了', '打在了', '两拳合拢，重重地砸在'], 'sword': ['挥向了', '刺向了', '截在', '的剑锋点在', '扫在了', '不偏不倚地刺中了']}
+PATSE_1 = ['的头部！', '的肚子上！', '的小腿上！', '的胳膊上！', '的脖子上！']
+ZYC = ['突然窜了出来', '挡住了去路', '从天而降', '突然钻了出来', '从地面钻出来']
+MATSE = ['咬住了', '夹住了', '冲向了', '撞在了', '用牙齿刺破了']
+MATSE_1 = ['的头！', '的肚子！', '的小腿！', '的胳膊！', '的脖子！', '的手！']
+
+# ------------------------
+# 判断
+if_sit = False
+if_run = False
+fi_enter = False
+menpai_can = False
+shop_enter = 0  # 是否进入商店
+w_time = 0
+
+# -------------------------
+# 地点
+place_l = {'无': ['', '', '', ''], '中央广场': ['北大道', '东大道', '南大道', '西大道'], '北大道': ['北大道_1', '无', '中央广场', '无'],
+           '北大道_1': ['北大道_2', '馒头铺', '北大道', '无'],
+           '北大道_2': ['北大道_3', '熟食铺', '北大道_1', '小吃店'], '北大道_3': ['北门', '无', '北大道_2', '无'],
+           '北门': ['树林', '无', '北大道_3', '无'], '树林': ['门派接待使者', '无', '北门', '无'],
+           '东大道': ['无', '东大道_2', '无', '中央广场'], '熟食铺': ['无', '无', '无', '北大道_2'], '门派接待使者': ['无', '无', '树林', '无 ']}
+place = '中央广场'
+
+# ------------------------
+# 门派
+menpai = ''
+menpai_list_kind = {'1': '华山剑宗', '2': '武当派', '3': '少林寺', '4': '峨眉派', '5': '昆仑派', '6': '崆峒派', '7': '恒山派', '8': '点苍派'}
+menpai_list_neutral = {'1': '唐门', '2': '桃花岛', '3': '遮天宗', '4': '雪山宗', '5': '明教', '6': '丐帮'}
+menpai_list_evil = {'1': '血刃门', '2': '日月神教', '3': '毒蛊宗'}
+
+# ------------------------
+# 音乐
+Music_list = ['']
+
+# ------------------------
+
+BAG = 10  # 背包总量（kg
+BAG_List_Buffer = {}
+for BAG_Used_key in FDLB.keys():
+    if BAG_Used_key in list(BAG_List.keys()):
+        BAG_Used =(FDLB[BAG_Used_key][2] * int(BAG_List[BAG_Used_key]))
 
 class Archive:
     def __init__(self, name, password):
@@ -33,6 +115,7 @@ class Archive:
         self.BAG_List = BAG_List
 
     def save_Archive(self):
+        global BAG_List_Buffer
         cwd = os.getcwd()
         f = open(cwd + '\\UserConfig.py', 'w', encoding='utf-8')
         f.write('name =' + "'" + str(self.name) + "'" +'\n')
@@ -50,9 +133,17 @@ class Archive:
         f.write('coin = ' + str(self.coin) + '\n')
         f.write('realm = ' + "'" +  self.realm + "'" + '\n')
         f.write('Buffer_LV = ' + str(Buffer_LV) + '\n')
+        f.write('head = ' + "'" + str(head) + "'" + '\n')
+        f.write('body = ' + "'" + str(body) + "'" + '\n')
+        f.write('leg = ' + "'" + str(leg) + "'" + '\n')
+        f.write('foot = ' + "'" + str(foot) + "'" + '\n')
+        f.write('hand = ' + "'" + str(hand) + "'" + '\n')
+        f.write('ET = ' + str(ET) + '\n')
+        f.write('auto_save_time = ' + str(auto_save_time) + '\n')
         f.close()
 
     def judgment(self):
+        global name, password
         if os.path.exists('UserConfig.py'):
             time.sleep(0.2)
             print('欢迎回来,\033[1;36m' + str(self.name) + '\033[0m')
@@ -76,13 +167,16 @@ class Archive:
             input_password = input('请输入密码<')
             password = input_password
             print('登陆成功')
-            save = Archive(name, password)
+            save = Archive(input_name, input_password)
             save.save_Archive()
-    def auto_save(self):
+    def auto_save(self, a):
+        global name, password, auto_save_time
+        print(a)
         while True:
+            time.sleep(auto_save_time)
             auto_s = Archive(name, password)
             auto_s.save_Archive()
-            time.sleep(auto_save_time)
+
 
 
 def update_announcement():
@@ -561,18 +655,6 @@ def use_things(name):
         print('你没有介玩意儿！')
 
 
-def shop():
-    global shop_enter
-    if AT <= 10:
-        print('你走进了店铺，里面人满为患，不乏一些强大的气息。你决定低调一点')
-        shop_enter = 1
-    else:
-        print('你大摇大摆地走进店铺，挤开了许多顾客')
-        shop_enter = 1
-    print('/buy l 打开购买菜单,/rec l 打开回收菜单')
-    print('/buy <物品名> 购买物品,/rec <物品名>回收物品')
-
-
 def shop_sl():  # 售卖菜单
     global shop_enter
     if shop_enter == 0:
@@ -641,6 +723,22 @@ def shop_r(thing):
             print('你掏了掏背包，你似乎没有这种东西')
     else:
         print('店小二似乎不认识这种东西')
+
+
+def shop():
+    global shop_enter
+    if AT <= 10:
+        print('你走进了店铺，里面人满为患，不乏一些强大的气息。你决定低调一点')
+        shop_enter = 1
+    else:
+        print('你大摇大摆地走进店铺，挤开了许多顾客')
+        shop_enter = 1
+    print('店小二递给你了回收菜单和出售菜单：')
+    print('回收菜单：')
+    shop_rl()
+    time.sleep(0.5)
+    print('出售菜单：')
+    shop_sl()
 
 
 def move(direction):
@@ -747,7 +845,7 @@ def cedn():  # 总检测
     if in1 == 'bag':
         bag()
     if 'use' in in1:
-        use_things(in1[5:])
+        use_things(in1[4:])
     if 'debug' in in1:
         if in1[7:8] == 'AT':
             AT_add(int(in1[10:]))
